@@ -1,0 +1,108 @@
+diff -ruN stm32c5xx-dfp/Include/stm32c531xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c531xx.h
+--- stm32c5xx-dfp/Include/stm32c531xx.h	2026-10-23 13:55:40.429519388 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c531xx.h	2026-10-24 22:58:18.896627554 +0200
+@@ -171,7 +171,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c532xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c532xx.h
+--- stm32c5xx-dfp/Include/stm32c532xx.h	2026-10-23 13:55:40.430546623 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c532xx.h	2026-10-24 22:58:18.901852969 +0200
+@@ -175,7 +175,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c542xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c542xx.h
+--- stm32c5xx-dfp/Include/stm32c542xx.h	2026-10-23 13:55:40.431515159 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c542xx.h	2026-10-24 22:58:18.375869384 +0200
+@@ -176,7 +176,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c551xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c551xx.h
+--- stm32c5xx-dfp/Include/stm32c551xx.h	2026-10-23 13:55:40.434427183 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c551xx.h	2026-10-24 22:58:18.896561232 +0200
+@@ -182,7 +182,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c552xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c552xx.h
+--- stm32c5xx-dfp/Include/stm32c552xx.h	2026-10-23 13:55:40.435449015 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c552xx.h	2026-10-24 22:58:18.889853343 +0200
+@@ -184,7 +184,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c562xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c562xx.h
+--- stm32c5xx-dfp/Include/stm32c562xx.h	2026-10-23 13:55:40.436439476 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c562xx.h	2026-10-24 22:58:18.888246935 +0200
+@@ -185,7 +185,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c591xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c591xx.h
+--- stm32c5xx-dfp/Include/stm32c591xx.h	2026-10-23 13:55:40.438448870 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c591xx.h	2026-10-24 22:58:18.925852220 +0200
+@@ -193,7 +193,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c593xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c593xx.h
+--- stm32c5xx-dfp/Include/stm32c593xx.h	2026-10-23 13:55:40.439792389 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c593xx.h	2026-10-24 22:58:18.928852126 +0200
+@@ -199,7 +199,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
+diff -ruN stm32c5xx-dfp/Include/stm32c5a3xx.h miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c5a3xx.h
+--- stm32c5xx-dfp/Include/stm32c5a3xx.h	2026-10-23 13:55:40.441142311 +0200
++++ miosix-kernel/miosix/arch/CMSIS/Device/ST/STM32C5xx/Include/stm32c5a3xx.h	2026-10-24 22:58:18.927852157 +0200
+@@ -201,7 +201,7 @@
+ 
+ /** @} */ /* End of group Configuration_of_CMSIS */
+ 
+-#include <core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
++#include <CMSIS/Include/core_cm33.h>                       /*!< ARM Cortex-M33 processor and core peripherals */
+ #include "system_stm32c5xx.h"                /*!< STM32C5xx System */
+ 
+ 
