@@ -25,7 +25,7 @@
  *   along with this program; if not, see <http://www.gnu.org/licenses/>   *
  ***************************************************************************/
 
-#include "drivers/clock/stm32c5_pll.h"
+#include "drivers/clock/stm32c5_psi.h"
 
 extern "C" void SystemInit();
 
@@ -37,7 +37,7 @@ void IRQmemoryAndClockInit()
     // handle the memory and clock initialization process.
     SystemInit();
 
-    startPll();
+    startPsi();
 }
 
 } // namespace miosix

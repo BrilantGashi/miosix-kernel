@@ -49,11 +49,11 @@ const unsigned int MAIN_STACK_SIZE=4*1024;
 
 /// Clock options
 enum class OscillatorType { HSI, HSE };
-// Supported oscillator types: HSI
-constexpr auto oscillatorType=OscillatorType::HSI;
-constexpr unsigned int hseFrequency=0;
-// Supported clock frequencies: 48000000
-constexpr unsigned int cpuFrequency=48000000;
+// Supported oscillator types: HSE
+constexpr auto oscillatorType=OscillatorType::HSE;
+constexpr unsigned int hseFrequency=24000000;
+// Supported clock frequencies: 144000000
+constexpr unsigned int cpuFrequency=144000000;
 
 /// Serial port
 const unsigned int defaultSerial=2;

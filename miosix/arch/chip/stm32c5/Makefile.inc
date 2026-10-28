@@ -23,11 +23,11 @@ arch/cpu/common/cortexMx_mpu.cpp                         \
 arch/cpu/common/cortexMx_userspace.cpp                   \
 arch/drivers/os_timer/stm32_32bit_os_timer.cpp           \
 arch/drivers/sleep/cortexMx_sleep.cpp                    \
-arch/drivers/serial/stm32u5_serial.cpp                 \
+arch/drivers/serial/stm32u5_serial.cpp                   \
 arch/drivers/serial/stm32_serial_common.cpp              \
 arch/drivers/gpio/stm32_gpio.cpp                         \
 arch/drivers/dcc.cpp                                     \
 $(CHIP_INC)/interfaces-impl/delays.cpp                   \
 $(CHIP_INC)/interfaces-impl/poweroff.cpp                 \
-arch/drivers/clock/stm32c5_pll.cpp                       \
+arch/drivers/clock/stm32c5_psi.cpp                       \
 arch/CMSIS/Device/ST/STM32C5xx/Source/Templates/system_stm32c5xx.cpp

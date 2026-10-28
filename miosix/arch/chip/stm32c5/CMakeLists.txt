@@ -27,6 +27,6 @@ set(MIOSIX_CHIP_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/arch/drivers/dcc.cpp
     ${MIOSIX_CHIP_INC}/interfaces-impl/delays.cpp
     ${MIOSIX_CHIP_INC}/interfaces-impl/poweroff.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/arch/drivers/clock/stm32c5_pll.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/arch/drivers/clock/stm32c5_psi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/arch/CMSIS/Device/ST/STM32C5xx/Source/Templates/system_stm32c5xx.cpp
 )
