@@ -14,6 +14,7 @@
 #OPT_BOARD := lpc2138_miosix_board
 #OPT_BOARD := nrf52840_generic
 #OPT_BOARD := rp2040_raspberry_pi_pico
+#OPT_BOARD := stm32c562re_nucleo
 #OPT_BOARD := stm32f030r8_stm32f0discovery
 #OPT_BOARD := stm32f072rb_stm32f0discovery
 #OPT_BOARD := stm32f100c8_microboard
@@ -66,7 +67,7 @@
 #OPT_BOARD := stm32l4r9zi_sensortile
 #OPT_BOARD := stm32u535cb_rrc
 #OPT_BOARD := stm32u585ci_generic
-
+#
 ##
 ## Optimization flags, choose one.
 ## -O0 produces large and slow code, but is useful for in circuit debugging.
