@@ -38,8 +38,6 @@ struct RCCPSIConfig
     unsigned int psiFreq, psiRef, psiRefSrc;
 };
 
-   // Supported clock frequencies: 144000000, 100000000
-
 static constexpr RCCPSIConfig psiConfigs[] = {
     {
         //24 MHz HSE -> PSI 144 MHz
@@ -58,15 +56,15 @@ static constexpr RCCPSIConfig psiConfigs[] = {
     {
         //HSI/18 = 8 MHz reference -> PSI 144 MHz  
         .oscType=OscillatorType::HSI, .hse=0, .sysclk=144000000, 
-        .psiFreq=0b01,          //00: PSI nominal frequency = 144 MHz
-        .psiRef=0b001,          //011: 8 MHz (HSI)
+        .psiFreq=0b01,          //01: PSI nominal frequency = 144 MHz
+        .psiRef=0b001,          //001: 8 MHz (HSI/18)
         .psiRefSrc=0b10,        //10: HSI clock divided by 18 used as reference for PSI
     },
     {
         //HSI/18 = 8 MHz reference -> PSI 100 MHz
         .oscType=OscillatorType::HSI, .hse=0, .sysclk=100000000,    
         .psiFreq=0b00,          //00: PSI nominal frequency = 100 MHz
-        .psiRef=0b001,          //011: 8 MHz (HSI)
+        .psiRef=0b001,          //001: 8 MHz (HSI/18)
         .psiRefSrc=0b10,        //10: HSI clock divided by 18 used as reference for PSI
     },
 };
@@ -98,7 +96,7 @@ void startPsi()
         RCC->CR1 |= RCC_CR1_HSISON;
         while((RCC->CR1 & RCC_CR1_HSISRDY)==0) ;   
     } 
-    // 2. Configure the PSI 
+    // 2. Configure the PSI while it is still off
     RCC->CR2 = (cfg.psiFreq << RCC_CR2_PSIFREQ_Pos)
             |  (cfg.psiRef << RCC_CR2_PSIREF_Pos)
             |  (cfg.psiRefSrc << RCC_CR2_PSIREFSRC_Pos);
@@ -107,7 +105,7 @@ void startPsi()
     RCC->CR1 |= RCC_CR1_PSISON;
     while((RCC->CR1 & RCC_CR1_PSISRDY)==0) ;
 
-    // Increase FLASH wait states 
+    // 4. Increase FLASH wait states before raising the clock
     constexpr unsigned int latency =
         cpuFrequency<=100000000 ? 2 :   // 68..102 MHz  -> 2 WS
         cpuFrequency<=144000000 ? 4 :   // 136..144 MHz -> 4 WS 
@@ -123,6 +121,7 @@ void startPsi()
                | (wrHighFreq << FLASH_ACR_WRHIGHFREQ_Pos);
     while((FLASH->ACR & FLASH_ACR_LATENCY_Msk) != (latency << FLASH_ACR_LATENCY_Pos)) ;
 
+    // 5. Switch the system clock to PSIS 
     RCC->CFGR1 |= 0b11 << RCC_CFGR1_SW_Pos;
     while((RCC->CFGR1 & RCC_CFGR1_SWS) != (0b11 << RCC_CFGR1_SWS_Pos)) ;
 
