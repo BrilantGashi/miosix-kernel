@@ -41,6 +41,28 @@ using namespace std;
 
 namespace miosix {
 
+#if defined(_CHIP_STM32C5)
+class STM32SerialDMAHW
+{
+public:
+    inline DMA_TypeDef *get() const { return nullptr; }
+    inline void IRQenable() const {}
+    inline void IRQdisable() const {}
+
+    inline IRQn_Type getTxIRQn() const { return static_cast<IRQn_Type>(0); }
+    inline IRQn_Type getRxIRQn() const { return static_cast<IRQn_Type>(0); }
+
+    inline void IRQinit() {}
+
+    inline void startDmaWrite(volatile uint32_t *dr, const char *buffer, size_t size) const {}
+    inline void IRQhandleDmaTxInterrupt() const {}
+    inline void IRQwaitDmaWriteStop() const {}
+
+    inline void IRQstartDmaRead(volatile uint32_t *dr, char *buffer, unsigned int size) const {}
+    inline int IRQstopDmaRead() const { return 0; }
+};
+    
+#else 
 class STM32SerialDMAHW
 {
 public:
@@ -142,8 +164,7 @@ private:
         return GPDMA1_Channel2->CSR;
     }
 };
-
-
+#endif
 /*
  * Auxiliary class that encapsulates all parts of code that differ between
  * between each instance of the USART peripheral.
@@ -215,6 +236,18 @@ static const STM32SerialHW ports[maxPorts] = {
     { LPUART1, LPUART1_IRQn, {8}, true, STM32Bus::APB3, RCC_APB3ENR_LPUART1EN},
 };
 
+#elif defined(STM32C562xx)
+// 0: USART1; 1: USART2; 2: USART3; 3: UART4; 4: UART5; 5: LPUART1
+constexpr int maxPorts = 6;
+
+static const STM32SerialHW ports[maxPorts] = {
+    { USART1, USART1_IRQn, {7},   false, STM32Bus::APB2, RCC_APB2ENR_USART1EN}, // AF7 (e.g. PA6 TX, PA7 RX)
+    { USART2, USART2_IRQn, {7},   false, STM32Bus::APB1L, RCC_APB1LENR_USART2EN}, // AF7 PA2 TX, PA3 RX
+    { USART3, USART3_IRQn, {7},   false, STM32Bus::APB1L, RCC_APB1LENR_USART3EN }, // AF7 (e.g. PC10 TX, PC11 RX)
+    { UART4,  UART4_IRQn,  {8},    false, STM32Bus::APB1L, RCC_APB1LENR_UART4EN}, // AF8 (e.g. PA0 TX, PA1 RX)
+    { UART5,  UART5_IRQn,  {14},    false, STM32Bus::APB1L, RCC_APB1LENR_UART5EN}, // AF14 (e.g. PB6 TX, PB5 RX)
+    { LPUART1, LPUART1_IRQn, {8}, true, STM32Bus::APB3, RCC_APB3ENR_LPUART1EN}, // AF8 (e.g. PB6 TX, PB7 RX)
+};
 
 #else
 // STM32U535xx has different alternate functions!
@@ -569,7 +602,7 @@ ssize_t STM32DmaSerial::readBlock(void *buffer, size_t size, off_t where)
 void STM32DmaSerial::IRQstartDmaRead()
 {
     port->getDma().IRQstartDmaRead(
-        reinterpret_cast<volatile uint32_t *>(&port->get()->RDR),
+        const_cast<volatile uint32_t *>(&port->get()->RDR),
         rxBuffer,rxQueueMin);
 }
 

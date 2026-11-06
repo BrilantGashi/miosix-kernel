@@ -97,6 +97,11 @@
     #define BUS_HAS_APB1L1H23
     #define ALTFUNC_STM32F2
     #define DMA_STM32U5
+#elif defined(_CHIP_STM32C5)
+    #define BUS_HAS_AHB12
+    #define BUS_HAS_APB1LH23_C5
+    #define ALTFUNC_STM32F2
+    #define DMA_STM32U5
 #else
     #define BUS_HAS_AHB12
     #define BUS_HAS_APB12
@@ -116,7 +121,7 @@ public:
     enum ID {
         #if defined(BUS_HAS_APB) || defined(BUS_HAS_APB12)
             APB1, APB2,
-        #elif defined(BUS_HAS_APB1L1H23)
+        #elif defined(BUS_HAS_APB1L1H23) || defined(BUS_HAS_APB1LH23_C5)
             APB1L, APB1H, APB2, APB3,
         #elif defined(BUS_HAS_APB1L1H2)
             APB1L, APB1H, APB2,
@@ -184,6 +189,20 @@ public:
                 if(RCC->CFGR3 & RCC_CFGR3_PPRE3_2)
                     freq/=1<<(((RCC->CFGR3>>RCC_CFGR3_PPRE3_Pos) & 0x3)+1);
                 break;
+        #elif defined(BUS_HAS_APB1LH23_C5)
+            case STM32Bus::APB1L:
+            case STM32Bus::APB1H:   
+                if(RCC->CFGR2 & RCC_CFGR2_PPRE1_2)
+                    freq/=1<<(((RCC->CFGR2>>RCC_CFGR2_PPRE1_Pos) & 0x3)+1);
+                break;
+            case STM32Bus::APB2:
+                if(RCC->CFGR2 & RCC_CFGR2_PPRE2_2)
+                    freq/=1<<(((RCC->CFGR2>>RCC_CFGR2_PPRE2_Pos) & 0x3)+1);
+                break;
+            case STM32Bus::APB3:
+                if(RCC->CFGR2 & RCC_CFGR2_PPRE3_2)
+                    freq/=1<<(((RCC->CFGR2>>RCC_CFGR2_PPRE3_Pos) & 0x3)+1);
+                break;
         #elif defined(BUS_HAS_APB1L1H2)
             case STM32Bus::APB1L:
             case STM32Bus::APB1H:
@@ -238,6 +257,11 @@ private:
             #elif defined(BUS_HAS_APB1L1H23)
                 case STM32Bus::APB1L: return RCC->APB1ENR1;
                 case STM32Bus::APB1H: return RCC->APB1ENR2;
+                case STM32Bus::APB2: return RCC->APB2ENR;
+                case STM32Bus::APB3: return RCC->APB3ENR;
+            #elif defined(BUS_HAS_APB1LH23_C5)
+                case STM32Bus::APB1L: return RCC->APB1LENR;
+                case STM32Bus::APB1H: return RCC->APB1HENR;
                 case STM32Bus::APB2: return RCC->APB2ENR;
                 case STM32Bus::APB3: return RCC->APB3ENR;
             #elif defined(BUS_HAS_APB1L1H234)
