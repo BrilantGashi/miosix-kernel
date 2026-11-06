@@ -39,6 +39,8 @@
 #include "interfaces/serial.h"
 #include "drivers/dcc.h"
 #include "board_settings.h"
+#include "interfaces/delays.h"
+#include "interfaces/bsp.h"
 
 namespace miosix {
 
@@ -61,7 +63,10 @@ void IRQbspInit()
     GPIOB->OSPEEDR=0xaaaaaaaa;
     GPIOC->OSPEEDR=0xaaaaaaaa;
     GPIOD->OSPEEDR=0xaaaaaaaa;
-
+    _led::mode(Mode::OUTPUT);
+    ledOn();
+    delayMs(100);
+    ledOff();
     // Initialize default serial
     IRQsetDefaultConsole(intrusive_ref_ptr<Device>(
     #ifndef STDOUT_REDIRECTED_TO_DCC
