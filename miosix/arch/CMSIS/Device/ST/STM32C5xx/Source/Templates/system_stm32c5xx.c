@@ -69,7 +69,7 @@
   * @{
   */
 
-#include "stm32c5xx.h"
+#include "interfaces/arch_registers.h"
 #include <math.h>
 
 /**
@@ -104,7 +104,7 @@
 /** @addtogroup STM32C5xx_System_Private_Variables
   * @{
   */
-extern const VECTOR_TABLE_Type __VECTOR_TABLE[];
+//extern const VECTOR_TABLE_Type __VECTOR_TABLE[];
 
 /* The SystemCoreClock variable is updated in three ways:
     1) by calling CMSIS function SystemCoreClockUpdate()
@@ -153,7 +153,7 @@ void SystemInit(void)
 #endif /* (__FPU_PRESENT == 1) && (__FPU_USED == 1) */
 
   /* Configure the Vector Table location -------------------------------------*/
-  SCB_SetVTOR((uint32_t)(&__VECTOR_TABLE[0]));
+  //SCB_SetVTOR((uint32_t)(&__VECTOR_TABLE[0]));
 }
 
 /**
