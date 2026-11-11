@@ -23,5 +23,5 @@ BOARD_CXXFLAGS := -D_BOARD_STM32C562RE_NUCLEO
 ## The command must provide a way to program the board, or print an
 ## error message saying that 'make program' is not supported for that
 ## board.
-PROG ?= STM32_Programmer_CLI -c port=SWD -w \
-        $(if $(ROMFS_DIR), image.bin, main.bin) 0x08000000 -v -rst
+PROG ?= pyocd flash -t stm32c562ret6 \
+        --base-address 0x08000000 $(if $(ROMFS_DIR), image.bin, main.bin)
