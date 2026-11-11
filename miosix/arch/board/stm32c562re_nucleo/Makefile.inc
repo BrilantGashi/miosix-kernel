@@ -23,5 +23,5 @@ BOARD_CXXFLAGS := -D_BOARD_STM32C562RE_NUCLEO
 ## The command must provide a way to program the board, or print an
 ## error message saying that 'make program' is not supported for that
 ## board.
-PROG ?= dfu-util -d 0483:df11 -a 0 -s 0x08000000:leave -D \
-        $(if $(ROMFS_DIR), image.bin, main.bin)
+PROG ?= STM32_Programmer_CLI -c port=SWD -w \
+        $(if $(ROMFS_DIR), image.bin, main.bin) 0x08000000 -v -rst
