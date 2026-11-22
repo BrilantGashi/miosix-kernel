@@ -42,26 +42,86 @@ using namespace std;
 namespace miosix {
 
 #if defined(_CHIP_STM32C5)
+
 class STM32SerialDMAHW
 {
 public:
-    inline DMA_TypeDef *get() const { return nullptr; }
-    inline void IRQenable() const {}
-    inline void IRQdisable() const {}
+    inline DMA_TypeDef *get() const { return tx ? LPDMA1 : nullptr; }
+    inline void IRQenable() const { STM32Bus::IRQen(STM32Bus::AHB1, RCC_AHB1ENR_LPDMA1EN); }
+    inline void IRQdisable() const { STM32Bus::IRQdis(STM32Bus::AHB1, RCC_AHB1ENR_LPDMA1EN); }
 
-    inline IRQn_Type getTxIRQn() const { return static_cast<IRQn_Type>(0); }
-    inline IRQn_Type getRxIRQn() const { return static_cast<IRQn_Type>(0); }
+    inline IRQn_Type getTxIRQn() const { return txIrq; }
+    inline unsigned long getTxCSR() const { return tx->CSR; }
+
+    inline IRQn_Type getRxIRQn() const { return rxIrq; }
+    inline unsigned long getRxCSR() const { return rx->CSR; }
 
     inline void IRQinit() {}
 
-    inline void startDmaWrite(volatile uint32_t *dr, const char *buffer, size_t size) const {}
-    inline void IRQhandleDmaTxInterrupt() const {}
-    inline void IRQwaitDmaWriteStop() const {}
+    inline void startDmaWrite(volatile uint32_t *dr, const char *buffer, size_t size) const
+    {
+        if(size==0) return;
+        tx->CFCR=DMA_CFCR_TCF | DMA_CFCR_DTEF;
+        tx->CSAR=reinterpret_cast<unsigned int>(buffer);
+        tx->CDAR=reinterpret_cast<unsigned int>(dr);
+        tx->CBR1=size & DMA_CBR1_BNDT;          //Number of bytes, not minus 1
+        tx->CTR1=DMA_CTR1_SINC;                 //Increment RAM pointer, byte transfers
+        tx->CTR2=txReq << DMA_CTR2_REQSEL_Pos;  //Peripheral request (REQSEL)
+        tx->CCR = DMA_CCR_PRIO_1                //Medium priority
+                | DMA_CCR_TCIE                  //Interrupt on completion
+                | DMA_CCR_DTEIE                 //Interrupt on transfer error
+                | DMA_CCR_EN;                   //Start the DMA
+    }
 
-    inline void IRQstartDmaRead(volatile uint32_t *dr, char *buffer, unsigned int size) const {}
-    inline int IRQstopDmaRead() const { return 0; }
+    inline void IRQhandleDmaTxInterrupt() const
+    {
+        tx->CFCR=DMA_CFCR_TCF | DMA_CFCR_DTEF;
+    }
+
+    inline void IRQwaitDmaWriteStop() const
+    {
+        while((tx->CCR & DMA_CCR_EN) && !(getTxCSR() & (DMA_CSR_TCF|DMA_CSR_DTEF))) ;
+    }
+
+    inline void IRQstartDmaRead(volatile uint32_t *dr, char *buffer, unsigned int size) const
+    {
+        rx->CFCR=DMA_CFCR_TCF | DMA_CFCR_DTEF | DMA_CFCR_SUSPF;
+        rx->CSAR=reinterpret_cast<unsigned int>(dr);
+        rx->CDAR=reinterpret_cast<unsigned int>(buffer);
+        rx->CBR1=size & DMA_CBR1_BNDT;          //Number of bytes, not minus 1
+        rx->CTR1=DMA_CTR1_DINC;                 //Increment RAM pointer, byte transfers
+        rx->CTR2=rxReq << DMA_CTR2_REQSEL_Pos;  //Peripheral request (REQSEL)
+        rx->CCR = DMA_CCR_PRIO_1                //Medium priority
+                | DMA_CCR_TCIE                  //Interrupt on transfer complete
+                | DMA_CCR_DTEIE                 //Interrupt on transfer error
+                | DMA_CCR_EN;                   //Start the DMA
+    }
+
+    inline int IRQstopDmaRead() const
+    {
+        //LPDMA ignores writing EN=0: if the channel is still running
+        //suspend it, wait until it is idle, then reset it
+        bool running=rx->CCR & DMA_CCR_EN;
+        if(running)
+        {
+            rx->CCR|=DMA_CCR_SUSP;
+            while((rx->CSR & DMA_CSR_IDLEF)==0) ;
+        }
+        int remaining=rx->CBR1 & DMA_CBR1_BNDT; //Bytes not yet received
+        if(running) rx->CCR|=DMA_CCR_RESET;
+        rx->CFCR=DMA_CFCR_TCF | DMA_CFCR_DTEF | DMA_CFCR_SUSPF;
+        return remaining;
+    }
+
+    DMA_Channel_TypeDef *tx;    ///< Pointer to DMA TX channel
+    IRQn_Type txIrq;            ///< DMA TX channel IRQ number
+    unsigned char txReq;        ///< DMA TX request number (REQSEL)
+
+    DMA_Channel_TypeDef *rx;    ///< Pointer to DMA RX channel
+    IRQn_Type rxIrq;            ///< DMA RX channel IRQ number
+    unsigned char rxReq;        ///< DMA RX request number (REQSEL)
 };
-    
+   
 #else 
 class STM32SerialDMAHW
 {
@@ -242,7 +302,8 @@ constexpr int maxPorts = 6;
 
 static const STM32SerialHW ports[maxPorts] = {
     { USART1, USART1_IRQn, {7},   false, STM32Bus::APB2, RCC_APB2ENR_USART1EN}, // AF7 (e.g. PA6 TX, PA7 RX)
-    { USART2, USART2_IRQn, {7},   false, STM32Bus::APB1L, RCC_APB1LENR_USART2EN}, // AF7 PA2 TX, PA3 RX
+    { USART2, USART2_IRQn, {7},   false, STM32Bus::APB1L, RCC_APB1LENR_USART2EN, // AF7 PA2 TX, PA3 RX
+     { LPDMA1_CH0, LPDMA1_CH0_IRQn, 15, LPDMA1_CH1, LPDMA1_CH1_IRQn, 14 } },     // usart2_tx_dma=15, usart2_rx_dma=14
     { USART3, USART3_IRQn, {7},   false, STM32Bus::APB1L, RCC_APB1LENR_USART3EN }, // AF7 (e.g. PC10 TX, PC11 RX)
     { UART4,  UART4_IRQn,  {8},    false, STM32Bus::APB1L, RCC_APB1LENR_UART4EN}, // AF8 (e.g. PA0 TX, PA1 RX)
     { UART5,  UART5_IRQn,  {14},    false, STM32Bus::APB1L, RCC_APB1LENR_UART5EN}, // AF14 (e.g. PB6 TX, PB5 RX)
@@ -493,7 +554,7 @@ void STM32DmaSerial::commonInit(int id, int baudrate, GpioPin tx, GpioPin rx,
                      | USART_CR1_IDLEIE //Interrupt on idle line
                      | USART_CR1_TE     //Transmission enbled
                      | USART_CR1_RE;    //Reception enabled
-    //IRQstartDmaRead();
+    IRQstartDmaRead();
 }
 
 ssize_t STM32DmaSerial::writeBlock(const void *buffer, size_t size, off_t where)
